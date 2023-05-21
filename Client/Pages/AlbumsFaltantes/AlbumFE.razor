@@ -1,0 +1,44 @@
+﻿@page "/AlbumFs/Modificar/{Id:int}"
+@inject HttpClient http
+@inject NavigationManager n
+@using Actividad_18.Shared.Models
+
+
+<h3>Edicion De Albums</h3>
+
+
+<EditForm Model="nalbum" OnValidSubmit="Modificar">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="txtTitle" class="form-label">Titulo</label>
+        <InputText id="txtTitle" class="form-control" @bind-Value="nalbum.title" />
+    </div>
+    <div class="mb-3">
+        <label for="txtArtist" class="form-label">Artista</label>
+        <InputText id="txtArtist" class="form-control" @bind-Value="nalbum.artist" />
+    </div>
+    <div class="mb-3">
+        <label for="dtFechaA" class="form-label">Fecha de Salida</label>
+        <InputDate id="dtFechaA" class="form-control" @bind-Value="nalbum.Fecha" />
+    </div>
+
+    <button type="submit" class="btn btn-primary"><span class="oi oi-plus"></span></button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private AlbumF nalbum = new AlbumF();
+
+    protected override async Task OnInitializedAsync()
+    {
+        nalbum = await http.GetFromJsonAsync<AlbumF>($"api/AlbumFs/{Id}");
+    }
+
+    private async void Modificar()
+    {
+        await http.PutAsJsonAsync($"api/AlbumFs/{Id}", nalbum);
+        n.NavigateTo("/AlbumsF");
+    }
+
+}

@@ -1,0 +1,69 @@
+﻿@page "/AlbumsF"
+@inject HttpClient http
+@inject NavigationManager n
+@using Actividad_18.Shared.Models
+
+<button class="btn btn-primary" @onclick=añadir><span class="oi oi-plus"></span></button>
+<h3>Albums Faltantes</h3>
+
+@if (nalbum == null)
+{
+    <h4>Cargando Datos...</h4>
+}
+else if (nalbum.Count() == 0)
+{
+    <h4>No existen Albunes Faltantes, En bueahora registrados</h4>
+}
+else
+{
+    <table class="table table-primary">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titulo</th>
+                <th>Artirsta</th>
+                <th>Fecha de Salida</th>
+                <th>Eliminar</th>
+                <th>Modificar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var j in nalbum)
+            {
+                <tr>
+                    <td>@j.Id</td>
+                    <td>@j.title</td>
+                    <td>@j.artist</td>
+                    <td>@j.Fecha</td>
+                    <td><button class="btn btn-danger" @onclick="(()=>Eliminar(j))"><span class="oi oi-trash"></span></button></td>
+                    <td><button class="btn btn-secondary" @onclick="(()=>Modificar(Convert.ToInt32(j.Id)))"><span class="oi oi-pencil"></span></button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<AlbumF> nalbum = new List<AlbumF>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        nalbum = await http.GetFromJsonAsync<List<AlbumF>>("api/AlbumFs");
+    }
+
+    public void añadir()
+    {
+        n.NavigateTo("/AlbumF/+");
+    }
+    public async Task Eliminar(AlbumF album)
+    {
+        await http.DeleteAsync($"api/AlbumFs/{album.Id}");
+        nalbum.Remove(album);
+    }
+
+    private void Modificar(int Id)
+    {
+        n.NavigateTo($"/AlbumFs/Modificar/{Id}");
+    }
+}

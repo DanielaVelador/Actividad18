@@ -1,0 +1,29 @@
+﻿@page "/Ubicacions/Nuevo"
+@inject HttpClient http
+@inject NavigationManager navegator
+@using Actividad_18.Shared.Models
+
+<h3>Nueva Ubicacion</h3>
+<EditForm Model="ubi" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="numestante" class="form-label">Numero de Estante</label>
+        <InputNumber id="numestante" class="form-control" @bind-Value="ubi.NoEstante" />
+    </div>
+    <div class="mb-3">
+        <label for="numpiso" class="form-label">Numero de Piso</label>
+        <InputNumber id="numpiso" class="form-control" @bind-Value="ubi.Piso" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+
+@code {
+    private Ubicacion ubi = new Ubicacion();
+    private async void Guardar()
+    {
+        await http.PostAsJsonAsync("api/Ubicaciones", ubi);
+        navegator.NavigateTo("/Ubicacion");
+    }
+}
